@@ -5,18 +5,17 @@ import psutil
 import torch
 import csv
 import os
+from evaluate import load
 
 model_path = "TinyLlama/TinyLlama_v1.1"
 
 
-def calculate_perplexity(model, tokenizer, text):
-    encodings = tokenizer(text, return_tensors='pt')
-    input_ids = encodings.input_ids
-    with torch.no_grad():
-        outputs = model(input_ids, labels=input_ids)
-        loss = outputs.loss
-        perplexity = torch.exp(loss).item()
-    return perplexity
+perplexity_metric = load("perplexity", module_type="metric")
+
+def calculate_perplexity(text):
+    results = perplexity_metric.compute(predictions=[text], model_id=model_path)
+    print(results)
+    return results['mean_perplexity']
 
 
 tokenizer = AutoTokenizer.from_pretrained(model_path)

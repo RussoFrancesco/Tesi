@@ -1,30 +1,24 @@
-from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
+from transformers import pipeline, Phi3ForCausalLM, AutoTokenizer
 from datasets import load_dataset
 import time
 import psutil
-import torch
 import csv
 import os
+from evaluate import load
 
 model_path = "microsoft/Phi-3-mini-4k-instruct"
 
 
-def calculate_perplexity(model, tokenizer, text):
-    encodings = tokenizer(text, return_tensors='pt')
-    input_ids = encodings.input_ids
-    with torch.no_grad():
-        outputs = model(input_ids, labels=input_ids)
-        loss = outputs.loss
-        perplexity = torch.exp(loss).item()
-    return perplexity
+perplexity_metric = load("perplexity", module_type="metric")
+
+def calculate_perplexity(text):
+    results = perplexity_metric.compute(predictions=[text], model_id=model_path)
+    print(results)
+    return results['mean_perplexity']
 
 
+model = Phi3ForCausalLM.from_pretrained(model_path) 
 tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained( 
-    model_path,    
-    torch_dtype="auto",  
-    trust_remote_code=True,  
-) 
 
 generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 
@@ -53,8 +47,8 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
-
-    score = calculate_perplexity(model, tokenizer, generated_text)
+    print(generated_text)
+    score = calculate_perplexity(generated_text)
 
 
     cpu_usage_after = psutil.cpu_percent(interval=1)

@@ -5,17 +5,16 @@ import psutil
 import torch
 import csv
 import os
+from evaluate import load
 
 model_path = 'mtgv/MobileLLaMA-1.4B-Base'
 
-def calculate_perplexity(model, tokenizer, text):
-    encodings = tokenizer(text, return_tensors='pt')
-    input_ids = encodings.input_ids
-    with torch.no_grad():
-        outputs = model(input_ids, labels=input_ids)
-        loss = outputs.loss
-        perplexity = torch.exp(loss).item()
-    return perplexity
+perplexity_metric = load("perplexity", module_type="metric")
+
+def calculate_perplexity(text):
+    results = perplexity_metric.compute(predictions=[text], model_id=model_path)
+    print(results)
+    return results['mean_perplexity']
 
 
 tokenizer = LlamaTokenizer.from_pretrained(model_path, legacy=False)
@@ -28,7 +27,7 @@ texts = dataset['text']
 
 
 headers = False
-filename = 'mobileLLaMA/mobileLLaMA.csv'
+filename = 'mobileLLaMA/mobileLLaMA-2.csv'
 if not os.path.exists(filename):
     headers = True
 
@@ -48,8 +47,9 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
-
-    score = calculate_perplexity(model, tokenizer, tokenizer.decode(generation_output[0]))
+    text_results = tokenizer.decode(generation_output[0], skip_special_tokens=True)
+    print(text_results)
+    score = calculate_perplexity(text_results)
 
 
     cpu_usage_after = psutil.cpu_percent(interval=1)
