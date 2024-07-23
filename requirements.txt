@@ -1,6 +1,5 @@
 transformers
 datasets
 psutil
-csv
 evaluate
 nltk
