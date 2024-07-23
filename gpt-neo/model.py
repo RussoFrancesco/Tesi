@@ -40,14 +40,13 @@ headers = not os.path.exists('gpt-neo/gpt-neo-1.csv')
 with open('gpt-neo/gpt-neo-1.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     if headers:
-        writer.writerow(["Input Text Index", "Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu"])
+        writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu"])
     
     for i, input_text in enumerate(texts):
-        if len(input_text.strip()) == 0:
-            continue
         
         cpu_usage_before = psutil.cpu_percent(interval=1)
         memory_usage_before = psutil.virtual_memory().used
+        num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
         start_time = time.time()
         generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
@@ -60,4 +59,4 @@ with open('gpt-neo/gpt-neo-1.csv', 'a', newline='') as f:
         cpu_usage_after = psutil.cpu_percent(interval=1)
         memory_usage_after = psutil.virtual_memory().used
 
-        writer.writerow([i, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu])
+        writer.writerow([i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu])
