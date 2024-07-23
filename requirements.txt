@@ -7,3 +7,4 @@ torch
 huggingface-hub
 pandas
 sentencepiece
+protobuf
