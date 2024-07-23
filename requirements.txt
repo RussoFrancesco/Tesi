@@ -6,3 +6,4 @@ nltk
 torch
 huggingface-hub
 pandas
+sentencepiece
