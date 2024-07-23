@@ -3,3 +3,5 @@ datasets
 psutil
 evaluate
 nltk
+torch
+huggingface-hub
