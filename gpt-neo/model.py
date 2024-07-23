@@ -5,9 +5,13 @@ import psutil
 import csv
 import os
 from evaluate import load
+import nltk
+from nltk.translate.bleu_score import sentence_bleu
 
 
 model_path = 'EleutherAI/gpt-neo-125M'
+
+nltk.download('punkt')
 
 
 perplexity_metric = load("perplexity", module_type="metric")
@@ -16,6 +20,12 @@ def calculate_perplexity(text):
     results = perplexity_metric.compute(predictions=[text], model_id=model_path)
     print(results)
     return results['mean_perplexity']
+
+def calculate_bleu(reference, text):
+    reference_tokens = nltk.word_tokenize(reference)
+    text_tokens = nltk.word_tokenize(text)
+    bleu = sentence_bleu([reference_tokens], text_tokens)
+    return bleu
 
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 model = GPTNeoForCausalLM.from_pretrained(model_path)
@@ -30,7 +40,7 @@ headers = not os.path.exists('gpt-neo/gpt-neo-1.csv')
 with open('gpt-neo/gpt-neo-1.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     if headers:
-        writer.writerow(["Input Text Index", "Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Score"])
+        writer.writerow(["Input Text Index", "Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu"])
     
     for i, input_text in enumerate(texts):
         if len(input_text.strip()) == 0:
@@ -44,9 +54,10 @@ with open('gpt-neo/gpt-neo-1.csv', 'a', newline='') as f:
         end_time = time.time()
         inference_time = end_time - start_time
 
-        score = calculate_perplexity(generated_text)
+        perplexity = calculate_perplexity(generated_text)
+        bleu = calculate_bleu(input_text, generated_text)
 
         cpu_usage_after = psutil.cpu_percent(interval=1)
         memory_usage_after = psutil.virtual_memory().used
 
-        writer.writerow([i, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score])
+        writer.writerow([i, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu])
