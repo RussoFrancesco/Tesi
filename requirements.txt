@@ -5,3 +5,4 @@ evaluate
 nltk
 torch
 huggingface-hub
+pandas
