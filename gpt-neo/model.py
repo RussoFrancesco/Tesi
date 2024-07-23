@@ -10,6 +10,7 @@ from nltk.translate.bleu_score import sentence_bleu
 
 
 model_path = 'EleutherAI/gpt-neo-125M'
+filename = 'gpt-neo-raspberry.csv'
 
 nltk.download('punkt')
 
@@ -35,9 +36,9 @@ generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
-headers = not os.path.exists('gpt-neo/gpt-neo-1.csv')
+headers = not os.path.exists(filename)
 
-with open('gpt-neo/gpt-neo-1.csv', 'a', newline='') as f:
+with open(filename, 'a', newline='') as f:
     writer = csv.writer(f)
     if headers:
         writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu"])
