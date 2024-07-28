@@ -8,6 +8,16 @@ import os
 from evaluate import load
 import nltk
 from nltk.translate.bleu_score import sentence_bleu
+import sys
+
+
+percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+
+if percorso_progetto not in sys.path:
+    sys.path.append(percorso_progetto)
+
+from hallucination import calculate_hallucination
 
 model_path = 'mtgv/MobileLLaMA-1.4B-Base'
 filename = 'mobileLLaMA-raspberry.csv'
@@ -54,6 +64,7 @@ for i, input_text in enumerate(texts):
     text_results = tokenizer.decode(generation_output[0], skip_special_tokens=True)
     score = calculate_perplexity(text_results)
     bleu = calculate_bleu(input_text, text_results)
+    hallucination = calculate_hallucination(input_text, text_results)
 
 
     cpu_usage_after = psutil.cpu_percent(interval=1)
@@ -63,8 +74,8 @@ for i, input_text in enumerate(texts):
     with open(filename, 'a', newline='') as f:
         writer = csv.writer(f)
         if headers:
-            writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu"])
+            writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu", "Hallucination"])
             headers = False  
-        writer.writerow([i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score])
+        writer.writerow([i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination])
 
 

@@ -7,10 +7,20 @@ import os
 from evaluate import load
 import nltk
 from nltk.translate.bleu_score import sentence_bleu
+import sys
+
+
+percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+
+if percorso_progetto not in sys.path:
+    sys.path.append(percorso_progetto)
+
+from hallucination import calculate_hallucination
 
 
 model_path = 'EleutherAI/gpt-neo-125M'
-filename = 'gpt-neo-raspberry.csv'
+filename = 'gpt-neo-hallucination.csv'
 
 nltk.download('punkt')
 
@@ -28,6 +38,7 @@ def calculate_bleu(reference, text):
     bleu = sentence_bleu([reference_tokens], text_tokens)
     return bleu
 
+
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 model = GPTNeoForCausalLM.from_pretrained(model_path)
 
@@ -41,7 +52,7 @@ headers = not os.path.exists(filename)
 with open(filename, 'a', newline='') as f:
     writer = csv.writer(f)
     if headers:
-        writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu"])
+        writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu", "Hallucination"])
     
     for i, input_text in enumerate(texts):
         
@@ -56,8 +67,9 @@ with open(filename, 'a', newline='') as f:
 
         perplexity = calculate_perplexity(generated_text)
         bleu = calculate_bleu(input_text, generated_text)
+        hallucination = calculate_hallucination(input_text, generated_text)
 
         cpu_usage_after = psutil.cpu_percent(interval=1)
         memory_usage_after = psutil.virtual_memory().used
 
-        writer.writerow([i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu])
+        writer.writerow([i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination])
