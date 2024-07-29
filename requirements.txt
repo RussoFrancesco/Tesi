@@ -1,9 +1,9 @@
-transformers
+transformers==4.42.4
 datasets
 psutil
 evaluate
 nltk
-torch
+torch==2.3.1
 huggingface-hub
 pandas
 sentencepiece
