@@ -3,7 +3,6 @@ from datasets import load_dataset
 import time
 import psutil
 import torch
-import csv
 import os
 from evaluate import load
 import nltk
@@ -18,9 +17,10 @@ if percorso_progetto not in sys.path:
     sys.path.append(percorso_progetto)
 
 from hallucination import calculate_hallucination
+from write_on_file import write_on_file
 
 model_path = 'mtgv/MobileLLaMA-1.4B-Base'
-filename = 'mobileLLaMA-raspberry.csv'
+filename = 'mobileLLaMA/mobileLLaMA-prova.csv'
 
 perplexity_metric = load("perplexity", module_type="metric")
 
@@ -43,12 +43,6 @@ model = LlamaForCausalLM.from_pretrained(
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']  
 
-
-headers = False
-if not os.path.exists(filename):
-    headers = True
-
-
 for i, input_text in enumerate(texts): 
     cpu_usage_before = psutil.cpu_percent(interval=1)
     memory_usage_before = psutil.virtual_memory().used
@@ -61,21 +55,14 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
+    cpu_usage_after = psutil.cpu_percent(interval=1)
+    memory_usage_after = psutil.virtual_memory().used
+
     text_results = tokenizer.decode(generation_output[0], skip_special_tokens=True)
     score = calculate_perplexity(text_results)
     bleu = calculate_bleu(input_text, text_results)
     hallucination = calculate_hallucination(input_text, text_results)
 
 
-    cpu_usage_after = psutil.cpu_percent(interval=1)
-    memory_usage_after = psutil.virtual_memory().used
-
-
-    with open(filename, 'a', newline='') as f:
-        writer = csv.writer(f)
-        if headers:
-            writer.writerow(["Input Text Index", "Input Tokens","Tempo di inferenza", "Uso CPU prima", "Uso CPU dopo", "Uso memoria prima", "Uso memoria dopo", "Perplexity", "Bleu", "Hallucination"])
-            headers = False  
-        writer.writerow([i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination])
-
+    write_on_file(filename, i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
 
