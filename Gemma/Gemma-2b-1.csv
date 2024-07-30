@@ -1,0 +1,2 @@
+Input Text Index,Input Tokens,Tempo di inferenza,Uso CPU prima,Uso CPU dopo,Uso memoria prima,Uso memoria dopo,Perplexity,Bleu,Hallucination
+0,1,18.054483890533447,5.1,18.9,2625028096,4409278464,6.604817867279053,0,0.028687015175819397

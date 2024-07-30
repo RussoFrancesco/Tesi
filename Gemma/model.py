@@ -58,6 +58,7 @@ for i, input_text in enumerate(texts):
     memory_usage_before = psutil.virtual_memory().used
 
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+    num_tokens = input_ids.shape[-1]
 
     start_time = time.time()
     generation_output = model.generate(input_ids=input_ids, max_new_tokens=32)
@@ -73,7 +74,6 @@ for i, input_text in enumerate(texts):
     bleu = calculate_bleu(input_text, text_result)
     hallucination = calculate_hallucination(input_text, text_result)
 
-
-    write_on_file(filename, i, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
+    write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
 
 
