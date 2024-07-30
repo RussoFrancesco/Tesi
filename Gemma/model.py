@@ -1,4 +1,4 @@
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from transformers import pipeline, GemmaTokenizer, GemmaForCausalLM
 from datasets import load_dataset
 import time
 import psutil
@@ -44,8 +44,8 @@ def calculate_bleu(reference, text):
     return bleu
 
 
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
+tokenizer = GemmaTokenizer.from_pretrained(model_path)
+model = GemmaForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
 
 
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
