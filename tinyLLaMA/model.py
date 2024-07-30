@@ -25,10 +25,20 @@ filename = 'tinyLLaMA/tinyLLaMA.csv'
 
 perplexity_metric = load("perplexity", module_type="metric")
 
-def calculate_perplexity(text):
+def calculate_perplexity(model, tokenizer, text):
+    encodings = tokenizer(text, return_tensors='pt')
+    input_ids = encodings.input_ids
+    with torch.no_grad():
+        outputs = model(input_ids, labels=input_ids)
+        loss = outputs.loss
+        perplexity = torch.exp(loss).item()
+    return perplexity
+
+'''def calculate_perplexity(text):
     results = perplexity_metric.compute(predictions=[text], model_id=model_path)
     print(results)
     return results['mean_perplexity']
+'''
 
 def calculate_bleu(reference, text):
     reference_tokens = nltk.word_tokenize(reference)
@@ -63,7 +73,7 @@ for i, input_text in enumerate(texts):
     cpu_usage_after = psutil.cpu_percent(interval=1)
     memory_usage_after = psutil.virtual_memory().used
 
-    score = calculate_perplexity(model, tokenizer, generated_text)
+    score = calculate_perplexity(generated_text)
     bleu = calculate_bleu(input_text, generated_text)
     hallucination = calculate_hallucination(input_text, generated_text)
 
