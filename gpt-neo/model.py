@@ -3,6 +3,7 @@ from datasets import load_dataset
 import time
 import psutil
 import os
+import torch
 from evaluate import load
 import nltk
 from nltk.translate.bleu_score import sentence_bleu
@@ -18,8 +19,10 @@ if percorso_progetto not in sys.path:
 from hallucination import calculate_hallucination
 from write_on_file import write_on_file
 
-model_path = 'EleutherAI/gpt-neo-125M'
-filename = 'gpt-neo/gpt-neo-hallucination.csv'
+model_params = sys.argv[1]
+
+model_path = f'EleutherAI/gpt-neo-{model_params}'
+filename = f'gpt-neo-{model_params}.csv'
 
 nltk.download('punkt')
 
@@ -39,7 +42,7 @@ def calculate_bleu(reference, text):
 
 
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
-model = GPTNeoForCausalLM.from_pretrained(model_path)
+model = GPTNeoForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
 
 generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 
