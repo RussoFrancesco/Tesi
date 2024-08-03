@@ -22,7 +22,7 @@ from write_on_file import write_on_file
 model_params = sys.argv[1]
 
 model_path = f'HuggingFaceTB/SmolLM-{model_params}'
-filename = f'SmolLM-{model_params}.csv'
+filename = f'SmolLM-{model_params}-raspberry.csv'
 
 nltk.download('punkt')
 
