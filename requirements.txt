@@ -9,3 +9,5 @@ pandas
 sentencepiece
 protobuf
 peft
+optimum
+optimum-quanto
