@@ -1,4 +1,4 @@
-from transformers import LlamaTokenizer, LlamaForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, QuantoConfig
 from datasets import load_dataset
 import time
 import psutil
@@ -9,6 +9,7 @@ import nltk
 from nltk.translate.bleu_score import sentence_bleu
 import sys
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -20,7 +21,7 @@ from hallucination import calculate_hallucination
 from write_on_file import write_on_file
 
 model_path = 'mtgv/MobileLLaMA-1.4B-Base'
-filename = 'mobileLLaMA/mobileLLaMA-prova.csv'
+filename = 'mobileLLaMA-prova.csv'
 
 perplexity_metric = load("perplexity", module_type="metric")
 
@@ -35,10 +36,12 @@ def calculate_bleu(reference, text):
     bleu = sentence_bleu([reference_tokens], text_tokens)
     return bleu
 
-tokenizer = LlamaTokenizer.from_pretrained(model_path, legacy=False)
-model = LlamaForCausalLM.from_pretrained(
-    model_path, torch_dtype=torch.float16
+#quantization_config = QuantoConfig(weights="int8")
+tokenizer = AutoTokenizer.from_pretrained(model_path, legacy=False)
+model = AutoModelForCausalLM.from_pretrained(
+    model_path
 )
+#print(f"Quantized model memory footprint: {model.get_memory_footprint():.2f} MB")
 
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']  
