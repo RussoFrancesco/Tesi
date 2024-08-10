@@ -36,10 +36,10 @@ def calculate_bleu(reference, text):
     bleu = sentence_bleu([reference_tokens], text_tokens)
     return bleu
 
-#quantization_config = QuantoConfig(weights="int8")
+quantization_config = QuantoConfig(weights="int8")
 tokenizer = AutoTokenizer.from_pretrained(model_path, legacy=False)
 model = AutoModelForCausalLM.from_pretrained(
-    model_path
+    model_path, quantization_config=quantization_config
 )
 #print(f"Quantized model memory footprint: {model.get_memory_footprint():.2f} MB")
 
