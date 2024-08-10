@@ -58,6 +58,7 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
+    print(f'Fine inferenza {i}')
     cpu_usage_after = psutil.cpu_percent(interval=1)
     memory_usage_after = psutil.virtual_memory().used
 
