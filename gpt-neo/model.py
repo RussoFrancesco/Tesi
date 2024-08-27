@@ -30,7 +30,7 @@ def getCPUuse():
             cpu_usage = values[8]
             mem_usage = values[9]
             break  # Interrompi il ciclo una volta trovata la riga
-    return eval(cpu_usage), eval(mem_usage)
+    return float(cpu_usage), float(mem_usage)
 
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
