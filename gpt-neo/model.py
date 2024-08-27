@@ -3,6 +3,7 @@ from datasets import load_dataset
 import time
 import psutil
 import os
+import subprocess
 import torch
 from evaluate import load
 import nltk
@@ -10,8 +11,28 @@ from nltk.translate.bleu_score import sentence_bleu
 import sys
 
 def getCPUuse():
-    return(str(os.popen("top -n1 | awk '/Cpu\(s\):/ {print $2}'").readline().strip(\
-)))
+    # Esegui il comando 'top' con l'opzione '-b' per modalità batch e '-n 1' per un singolo ciclo
+    process = subprocess.Popen(['top', '-b', '-n', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+
+    # Decodifica l'output in modo che sia una stringa
+    output = stdout.decode('utf-8')
+
+    # Cerca la riga che contiene 'pt_main_thread'
+    cpu_usage = None
+    mem_usage = None
+
+    for line in output.splitlines():
+        if 'pt_main_thread' in line:
+            # Dividi la riga in colonne
+            values = line.split()
+            
+            # Estrai i valori di %CPU e %MEM
+            cpu_usage = values[8]
+            mem_usage = values[9]
+            break  # Interrompi il ciclo una volta trovata la riga
+    return cpu_usage, mem_usage
+
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -55,8 +76,9 @@ texts = dataset['text']
 
 for i, input_text in enumerate(texts):
         
-    cpu_usage_before = getCPUuse()
-    memory_usage_before = psutil.virtual_memory().percent
+    cpu_usage_before, memory_usage_before = getCPUuse()
+    cpu_usage_before /= 4
+    #memory_usage_before = psutil.virtual_memory().percent
     #memory_usage_before = process.memory_info().rss
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
@@ -64,8 +86,9 @@ for i, input_text in enumerate(texts):
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    cpu_usage_after = getCPUuse()
-    memory_usage_after = psutil.virtual_memory().percent
+    cpu_usage_after, memory_usage_after = getCPUuse()
+    cpu_usage_after /= 4
+    #memory_usage_after = psutil.virtual_memory().percent
 
     inference_time = end_time - start_time
 
