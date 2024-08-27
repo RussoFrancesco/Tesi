@@ -23,6 +23,7 @@ model_params = sys.argv[1]
 
 model_path = f'EleutherAI/gpt-neo-{model_params}'
 filename = f'gpt-neo-{model_params}.csv'
+process = psutil.Process(os.getpid())
 
 nltk.download('punkt')
 
@@ -51,15 +52,16 @@ texts = dataset['text']
 
 for i, input_text in enumerate(texts):
         
-    cpu_usage_before = psutil.cpu_percent(interval=0.1)
+    cpu_usage_before = process.cpu_percent(interval=None)
     memory_usage_before = psutil.virtual_memory().percent
+    #memory_usage_before = process.memory_info().rss
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
     start_time = time.time()
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    cpu_usage_after = psutil.cpu_percent(interval=0.1)
+    cpu_usage_after = process.cpu_percent(interval=None)
     memory_usage_after = psutil.virtual_memory().percent
 
     inference_time = end_time - start_time
