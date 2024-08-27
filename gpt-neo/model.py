@@ -52,7 +52,7 @@ texts = dataset['text']
 
 for i, input_text in enumerate(texts):
         
-    cpu_usage_before = process.cpu_percent(interval=None)
+    cpu_usage_before = sum(psutil.cpu_percent(interval=None, percpu=True))
     memory_usage_before = psutil.virtual_memory().percent
     #memory_usage_before = process.memory_info().rss
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
@@ -61,7 +61,7 @@ for i, input_text in enumerate(texts):
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    cpu_usage_after = process.cpu_percent(interval=None)
+    cpu_usage_after = sum(psutil.cpu_percent(interval=None, percpu=True))
     memory_usage_after = psutil.virtual_memory().percent
 
     inference_time = end_time - start_time
