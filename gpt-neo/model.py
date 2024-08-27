@@ -15,14 +15,11 @@ def getCPUuse():
     process = subprocess.Popen(['top', '-b', '-n', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
-    # Decodifica l'output in modo che sia una stringa
-    output = stdout.decode('utf-8')
-
     # Cerca la riga che contiene 'pt_main_thread'
     cpu_usage = None
     mem_usage = None
 
-    for line in output.splitlines():
+    for line in stdout.splitlines():
         if 'pt_main_thread' in line:
             # Dividi la riga in colonne
             values = line.split()
