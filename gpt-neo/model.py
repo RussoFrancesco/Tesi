@@ -76,6 +76,7 @@ texts = dataset['text']
 
 for i, input_text in enumerate(texts):
         
+    print(getCPUuse())
     cpu_usage_before, memory_usage_before = getCPUuse()
     cpu_usage_before /= 4
     #memory_usage_before = psutil.virtual_memory().percent
