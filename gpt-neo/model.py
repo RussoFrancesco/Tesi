@@ -11,25 +11,21 @@ from nltk.translate.bleu_score import sentence_bleu
 import sys
 
 def getCPUuse():
-    # Esegui il comando 'top' con l'opzione '-b' per modalità batch e '-n 1' per un singolo ciclo
     process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
-    print(stdout.decode())
     stdout = stdout.decode()
-    # Cerca la riga che contiene 'pt_main_thread'
     cpu_usage = None
     mem_usage = None
 
     for line in stdout.splitlines():
         if 'pt_main' in line:
-            # Dividi la riga in colonne
             values = line.split()
             
-            # Estrai i valori di %CPU e %MEM
             cpu_usage = values[8]
             mem_usage = values[9]
-            break  # Interrompi il ciclo una volta trovata la riga
+            break 
+
     return float(cpu_usage), float(mem_usage)
 
 
@@ -74,8 +70,7 @@ dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
 for i, input_text in enumerate(texts):
-        
-    print(getCPUuse())
+    
     cpu_usage_before, memory_usage_before = getCPUuse()
     cpu_usage_before /= 4
     #memory_usage_before = psutil.virtual_memory().percent
