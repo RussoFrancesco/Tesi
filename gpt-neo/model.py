@@ -21,7 +21,7 @@ def getCPUuse():
     mem_usage = None
 
     for line in stdout.splitlines():
-        if 'pt_main_thread' in line:
+        if 'pt_main' in line:
             # Dividi la riga in colonne
             values = line.split()
             
