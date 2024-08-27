@@ -73,16 +73,20 @@ for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
-    cpu_usage_before = psutil.cpu_percent(interval=1)
-    memory_usage_before = psutil.virtual_memory().used
+    cpu_usage_before, memory_usage_before = getCPUuse()
+    cpu_usage_before /= 4
+    #cpu_usage_before = psutil.cpu_percent(interval=0.1)
+    #memory_usage_before = psutil.virtual_memory().used
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
     start_time = time.time()
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    cpu_usage_after = psutil.cpu_percent(interval=1)
-    memory_usage_after = psutil.virtual_memory().used
+    #cpu_usage_after = psutil.cpu_percent(interval=0.1)
+    #memory_usage_after = psutil.virtual_memory().used
+    cpu_usage_after, memory_usage_after = getCPUuse()
+    cpu_usage_after /= 4
 
     inference_time = end_time - start_time
 
