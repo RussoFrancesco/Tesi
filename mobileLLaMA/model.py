@@ -36,17 +36,16 @@ def calculate_bleu(reference, text):
     bleu = sentence_bleu([reference_tokens], text_tokens)
     return bleu
 
-quantization_config = QuantoConfig(weights="int8")
 tokenizer = AutoTokenizer.from_pretrained(model_path, legacy=False)
-model = AutoModelForCausalLM.from_pretrained(
-    model_path, quantization_config=quantization_config
-)
-#print(f"Quantized model memory footprint: {model.get_memory_footprint():.2f} MB")
+model = AutoModelForCausalLM.from_pretrained(model_path)
 
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']  
 
 for i, input_text in enumerate(texts): 
+    if i >= 100:
+        break
+
     cpu_usage_before = psutil.cpu_percent(interval=1)
     memory_usage_before = psutil.virtual_memory().used
 
@@ -58,7 +57,6 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
-    print(f'Fine inferenza {i}')
     cpu_usage_after = psutil.cpu_percent(interval=1)
     memory_usage_after = psutil.virtual_memory().used
 
@@ -66,7 +64,6 @@ for i, input_text in enumerate(texts):
     score = calculate_perplexity(text_results)
     bleu = calculate_bleu(input_text, text_results)
     hallucination = calculate_hallucination(input_text, text_results)
-
 
     write_on_file(filename, i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
 

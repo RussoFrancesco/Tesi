@@ -51,6 +51,8 @@ dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
 for i, input_text in enumerate(texts):
+    if i >= 100:
+        break
         
     cpu_usage_before = psutil.cpu_percent(interval=1)
     memory_usage_before = psutil.virtual_memory().used
