@@ -12,9 +12,10 @@ import sys
 
 def getCPUuse():
     # Esegui il comando 'top' con l'opzione '-b' per modalità batch e '-n 1' per un singolo ciclo
-    process = subprocess.Popen(['top', '-b', '-n', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
+    print(stdout.decode())
     # Cerca la riga che contiene 'pt_main_thread'
     cpu_usage = None
     mem_usage = None
