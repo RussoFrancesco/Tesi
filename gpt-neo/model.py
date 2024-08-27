@@ -16,6 +16,7 @@ def getCPUuse():
     stdout, stderr = process.communicate()
 
     print(stdout.decode())
+    stdout = stdout.decode()
     # Cerca la riga che contiene 'pt_main_thread'
     cpu_usage = None
     mem_usage = None
