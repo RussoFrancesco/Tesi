@@ -92,19 +92,19 @@ def calculate_bleu(reference, text):
 
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 model = GPTNeoForCausalLM.from_pretrained(model_path)
-p = psutil.Process()
+
 
 generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
-
+p = psutil.Process()
+p.cpu_percent(interval=0.1)
 for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
-    p.cpu_percent(interval=0.1)
     '''thread = threading.Thread(target=getCPUuse)
     thread2 = threading.Thread(target=getCPUuse)
     thread.start()
@@ -116,6 +116,7 @@ for i, input_text in enumerate(texts):
     #cpu_usage_before /= 4
     #print(psutil.cpu_times_percent(interval=0.1, percpu=False))
     cpu_usage_before = p.cpu_percent(interval=0.1)
+    print(cpu_usage_before)
     memory_usage_before = p.memory_percent()
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
@@ -128,6 +129,7 @@ for i, input_text in enumerate(texts):
     cpu_usage_after = cpu_list.pop()
     memory_usage_after = memory_list.pop()'''
     cpu_usage_after = p.cpu_percent(interval=0.1)
+    print(cpu_usage_after)
     memory_usage_after = p.memory_percent()
     #cpu_usage_after, memory_usage_after = getCPUuse()
     #cpu_usage_after /= 4
