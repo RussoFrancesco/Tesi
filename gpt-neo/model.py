@@ -75,6 +75,7 @@ for i, input_text in enumerate(texts):
 
     #cpu_usage_before, memory_usage_before = getCPUuse()
     #cpu_usage_before /= 4
+    print(psutil.cpu_times_percent(interval=0.1, percpu=False))
     cpu_usage_before = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
     memory_usage_before = psutil.virtual_memory().percent
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
