@@ -9,6 +9,7 @@ from evaluate import load
 import nltk
 from nltk.translate.bleu_score import sentence_bleu
 import sys
+import threading
 
 def getCPUuse():
     process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -26,7 +27,7 @@ def getCPUuse():
             mem_usage = values[9]
             break 
 
-    return float(cpu_usage), float(mem_usage)
+    print(float(cpu_usage), float(mem_usage))
 
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -69,10 +70,13 @@ generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
+thread = threading.Thread(target=getCPUuse)
+
 for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
+    thread.start()
     #cpu_usage_before, memory_usage_before = getCPUuse()
     #cpu_usage_before /= 4
     print(psutil.cpu_times_percent(interval=0.1, percpu=False))
