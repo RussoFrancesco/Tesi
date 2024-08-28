@@ -100,7 +100,7 @@ dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
 p = psutil.Process()
-p.cpu_percent(interval=0.1)
+p.cpu_percent(interval=None)
 for i, input_text in enumerate(texts):
     if i >= 100:
         break
@@ -115,7 +115,7 @@ for i, input_text in enumerate(texts):
     #cpu_usage_before, memory_usage_before = getCPUuse()
     #cpu_usage_before /= 4
     #print(psutil.cpu_times_percent(interval=0.1, percpu=False))
-    cpu_usage_before = p.cpu_percent(interval=0.1)
+    cpu_usage_before = p.cpu_percent(interval=None)
     print(cpu_usage_before)
     memory_usage_before = p.memory_percent()
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
@@ -128,7 +128,7 @@ for i, input_text in enumerate(texts):
     thread2.join()
     cpu_usage_after = cpu_list.pop()
     memory_usage_after = memory_list.pop()'''
-    cpu_usage_after = p.cpu_percent(interval=0.1)
+    cpu_usage_after = p.cpu_percent(interval=None)
     print(cpu_usage_after)
     memory_usage_after = p.memory_percent()
     #cpu_usage_after, memory_usage_after = getCPUuse()
