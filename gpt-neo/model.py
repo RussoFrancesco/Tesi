@@ -101,4 +101,4 @@ for i, input_text in enumerate(texts):
     hallucination = calculate_hallucination(input_text, generated_text)
 
 
-    #write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination)
+    write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination)
