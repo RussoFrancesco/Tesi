@@ -12,6 +12,10 @@ import sys
 import threading
 
 def getCPUuse():
+    while True:
+        print(psutil.cpu_percent(interval=0.1, percpu=False))
+        print(psutil.virtual_memory().percent)
+    '''
     process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
@@ -27,7 +31,7 @@ def getCPUuse():
             mem_usage = values[9]
             break 
 
-    return cpu_usage, mem_usage
+    return cpu_usage, mem_usage'''
 
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -77,7 +81,7 @@ for i, input_text in enumerate(texts):
         break
 
     thread.start()
-    cpu_usage_before, memory_usage_before = thread.join()
+    #cpu_usage_before, memory_usage_before = thread.join()
 
     #cpu_usage_before, memory_usage_before = getCPUuse()
     #cpu_usage_before /= 4
@@ -90,8 +94,8 @@ for i, input_text in enumerate(texts):
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    thread.start()
-    cpu_usage_after, memory_usage_after = thread.join()
+    #thread.start()
+    #cpu_usage_after, memory_usage_after = thread.join()
     #cpu_usage_after = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
     #memory_usage_after = psutil.virtual_memory().percent
     #cpu_usage_after, memory_usage_after = getCPUuse()
@@ -104,4 +108,4 @@ for i, input_text in enumerate(texts):
     hallucination = calculate_hallucination(input_text, generated_text)
 
 
-    write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination)
+    #write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination)
