@@ -15,7 +15,9 @@ memory_list = []
 cpu_list = []
 
 def getCPUuse():
-    cpu_list.append(psutil.cpu_percent(interval=0.1, percpu=False))
+    print(psutil.cpu_percent(interval=0.1))
+    print(psutil.virtual_memory().percent)
+    cpu_list.append(psutil.cpu_percent(interval=0.1))
     memory_list.append(psutil.virtual_memory().percent)
     return None
 
