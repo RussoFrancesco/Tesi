@@ -17,7 +17,7 @@ if percorso_progetto not in sys.path:
     sys.path.append(percorso_progetto)
 
 from hallucination import calculate_hallucination
-from write_on_file import write_on_file
+from write_on_file import write_on_file, end_testing
 
 
 login(token='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')
@@ -49,15 +49,16 @@ model = GemmaForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
 
 
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
-texts = dataset['text']  
-
+texts = dataset['text']
+p = psutil.Process()  
+p.cpu_percent(interval=None)
 
 for i, input_text in enumerate(texts):
-    if i >= 100:
+    if i >= 101:
         break
 
-    cpu_usage_before = psutil.cpu_percent(interval=0.1)
-    memory_usage_before = psutil.virtual_memory().percent
+    cpu_usage_before = p.cpu_percent(interval=None)
+    memory_usage_before = p.memory_percent()
 
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
     num_tokens = input_ids.shape[-1]
@@ -67,8 +68,14 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
-    cpu_usage_after = psutil.cpu_percent(interval=0.1)
-    memory_usage_after = psutil.virtual_memory().percent
+    cpu_usage_after = p.cpu_percent(interval=None)
+    memory_usage_after = p.memory_percent()
+
+    if cpu_usage_before > 100:
+        cpu_usage_before = cpu_usage_before / 4
+    
+    if cpu_usage_after > 100:
+        cpu_usage_after = cpu_usage_after / 4
 
 
     text_result = tokenizer.decode(generation_output[0])
@@ -78,4 +85,4 @@ for i, input_text in enumerate(texts):
 
     write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
 
-
+end_testing("Gemma-2b.txt")

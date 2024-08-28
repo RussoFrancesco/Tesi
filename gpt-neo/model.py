@@ -15,7 +15,7 @@ if percorso_progetto not in sys.path:
     sys.path.append(percorso_progetto)
 
 from hallucination import calculate_hallucination
-from write_on_file import write_on_file
+from write_on_file import write_on_file, end_testing
 
 model_params = sys.argv[1]
 
@@ -47,8 +47,9 @@ texts = dataset['text']
 p = psutil.Process()
 p.cpu_percent(interval=None)
 for i, input_text in enumerate(texts):
-    if i >= 100:
+    if i >= 101:
         break
+
     cpu_usage_before = p.cpu_percent(interval=None)
     memory_usage_before = p.memory_percent()
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
@@ -62,9 +63,17 @@ for i, input_text in enumerate(texts):
 
     inference_time = end_time - start_time
 
+    if cpu_usage_before > 100:
+        cpu_usage_before = cpu_usage_before / 4
+    
+    if cpu_usage_after > 100:
+        cpu_usage_after = cpu_usage_after / 4
+
     perplexity = calculate_perplexity(generated_text)
     bleu = calculate_bleu(input_text, generated_text)
     hallucination = calculate_hallucination(input_text, generated_text)
 
 
     write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination)
+
+end_testing(f"gpt-neo-{model_params}-raspberry.txt")
