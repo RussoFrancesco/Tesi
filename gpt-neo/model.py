@@ -15,11 +15,27 @@ memory_list = []
 cpu_list = []
 
 def getCPUuse():
-    print(psutil.cpu_percent(interval=None))
+    '''print(psutil.cpu_percent(interval=None))
     print(psutil.virtual_memory().percent)
     cpu_list.append(psutil.cpu_percent(interval=None))
     memory_list.append(psutil.virtual_memory().percent)
-    return None
+    return None'''
+    process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    stdout = stdout.decode()
+    cpu_usage = None
+    mem_usage = None
+    for line in stdout.splitlines():
+        if 'pt_main' in line:
+            values = line.split()
+            
+            cpu_usage = values[8]
+            mem_usage = values[9]
+            break
+    print(cpu_usage)
+    print(mem_usage) 
+    cpu_list.append(float(cpu_usage))
+    memory_list.append(float(mem_usage))
 
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
