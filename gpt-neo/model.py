@@ -28,7 +28,7 @@ def getCPUuse():
                 mem_usage = values[9]
                 break 
 
-        print(float(cpu_usage), float(mem_usage))
+        return cpu_usage, mem_usage
 
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -78,19 +78,23 @@ for i, input_text in enumerate(texts):
         break
 
     thread.start()
+    cpu_usage_before, memory_usage_before = thread.join()
+
     #cpu_usage_before, memory_usage_before = getCPUuse()
     #cpu_usage_before /= 4
     #print(psutil.cpu_times_percent(interval=0.1, percpu=False))
-    cpu_usage_before = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
-    memory_usage_before = psutil.virtual_memory().percent
+    #cpu_usage_before = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
+    #memory_usage_before = psutil.virtual_memory().percent
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
     start_time = time.time()
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    cpu_usage_after = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
-    memory_usage_after = psutil.virtual_memory().percent
+    thread.start()
+    cpu_usage_after, memory_usage_after = thread.join()
+    #cpu_usage_after = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
+    #memory_usage_after = psutil.virtual_memory().percent
     #cpu_usage_after, memory_usage_after = getCPUuse()
     #cpu_usage_after /= 4
 
