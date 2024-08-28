@@ -92,6 +92,7 @@ def calculate_bleu(reference, text):
 
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 model = GPTNeoForCausalLM.from_pretrained(model_path)
+p = psutil.Process(os.getpid())
 
 generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 
@@ -103,30 +104,30 @@ for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
-    thread = threading.Thread(target=getCPUuse)
+    '''thread = threading.Thread(target=getCPUuse)
     thread2 = threading.Thread(target=getCPUuse)
     thread.start()
     thread.join()
     cpu_usage_before = cpu_list.pop()
-    memory_usage_before = memory_list.pop()
+    memory_usage_before = memory_list.pop()'''
 
     #cpu_usage_before, memory_usage_before = getCPUuse()
     #cpu_usage_before /= 4
     #print(psutil.cpu_times_percent(interval=0.1, percpu=False))
-    #cpu_usage_before = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
-    #memory_usage_before = psutil.virtual_memory().percent
+    cpu_usage_before = p.cpu_percent(interval=0.1, percpu=False)
+    memory_usage_before = p.memory_percent()
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
     start_time = time.time()
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    thread2.start()
+    '''thread2.start()
     thread2.join()
     cpu_usage_after = cpu_list.pop()
-    memory_usage_after = memory_list.pop()
-    #cpu_usage_after = psutil.cpu_times_percent(interval=0.1, percpu=False)[0]
-    #memory_usage_after = psutil.virtual_memory().percent
+    memory_usage_after = memory_list.pop()'''
+    cpu_usage_after = p.cpu_percent(interval=0.1, percpu=False)
+    memory_usage_after = p.memory_percent()
     #cpu_usage_after, memory_usage_after = getCPUuse()
     #cpu_usage_after /= 4
 
