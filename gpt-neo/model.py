@@ -67,7 +67,7 @@ for i, input_text in enumerate(texts):
 
     thread = threading.Thread(target=getCPUuse)
     thread2 = threading.Thread(target=getCPUuse)
-    thread.run()
+    thread.start()
     thread.join()
     cpu_usage_before = cpu_list.pop()
     memory_usage_before = memory_list.pop()
@@ -83,7 +83,7 @@ for i, input_text in enumerate(texts):
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    thread2.run()
+    thread2.start()
     thread2.join()
     cpu_usage_after = cpu_list.pop()
     memory_usage_after = memory_list.pop()
