@@ -12,22 +12,23 @@ import sys
 import threading
 
 def getCPUuse():
-    process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
+    while True:
+        process = subprocess.Popen(['top', '-b', '-n', '1', '-p', str(os.getpid())], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
 
-    stdout = stdout.decode()
-    cpu_usage = None
-    mem_usage = None
+        stdout = stdout.decode()
+        cpu_usage = None
+        mem_usage = None
 
-    for line in stdout.splitlines():
-        if 'pt_main' in line:
-            values = line.split()
-            
-            cpu_usage = values[8]
-            mem_usage = values[9]
-            break 
+        for line in stdout.splitlines():
+            if 'pt_main' in line:
+                values = line.split()
+                
+                cpu_usage = values[8]
+                mem_usage = values[9]
+                break 
 
-    print(float(cpu_usage), float(mem_usage))
+        print(float(cpu_usage), float(mem_usage))
 
 
 percorso_progetto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
