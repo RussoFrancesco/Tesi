@@ -92,7 +92,7 @@ def calculate_bleu(reference, text):
 
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 model = GPTNeoForCausalLM.from_pretrained(model_path)
-p = psutil.Process(os.getpid())
+p = psutil.Process()
 
 generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 
@@ -104,6 +104,7 @@ for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
+    p.cpu_percent(interval=0.1)
     '''thread = threading.Thread(target=getCPUuse)
     thread2 = threading.Thread(target=getCPUuse)
     thread.start()
