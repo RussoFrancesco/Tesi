@@ -20,7 +20,7 @@ from hallucination import calculate_hallucination
 from write_on_file import write_on_file
 
 model_path = "TinyLlama/TinyLlama_v1.1"
-filename = 'TinyLLaMA/tinyLLaMA-1.csv'
+filename = 'tinyLLaMA-mac.csv'
 
 
 #perplexity_metric = load("perplexity", module_type="metric")
@@ -61,8 +61,8 @@ for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
-    cpu_usage_before = psutil.cpu_percent(interval=1)
-    memory_usage_before = psutil.virtual_memory().used
+    cpu_usage_before = psutil.cpu_percent(interval=0.1)
+    memory_usage_before = psutil.virtual_memory().percent
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
     num_tokens = input_ids.shape[-1]
 
@@ -72,8 +72,8 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
-    cpu_usage_after = psutil.cpu_percent(interval=1)
-    memory_usage_after = psutil.virtual_memory().used
+    cpu_usage_after = psutil.cpu_percent(interval=0.1)
+    memory_usage_after = psutil.virtual_memory().percent
 
     score = calculate_perplexity(model, tokenizer, generated_text)
     bleu = calculate_bleu(input_text, generated_text)

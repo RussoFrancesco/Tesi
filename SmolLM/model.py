@@ -22,7 +22,7 @@ from write_on_file import write_on_file
 model_params = sys.argv[1]
 
 model_path = f'HuggingFaceTB/SmolLM-{model_params}'
-filename = f'SmolLM-{model_params}-raspberry.csv'
+filename = f'SmolLM-{model_params}-mac.csv'
 
 nltk.download('punkt')
 
@@ -42,7 +42,7 @@ def calculate_bleu(reference, text):
 
 
 tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
+model = AutoModelForCausalLM.from_pretrained(model_path)
 print(f"Memory footprint: {model.get_memory_footprint() / 1e6:.2f} MB")
 
 generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
@@ -54,16 +54,16 @@ for i, input_text in enumerate(texts):
     if i >= 100:
         break
         
-    cpu_usage_before = psutil.cpu_percent(interval=1)
-    memory_usage_before = psutil.virtual_memory().used
+    cpu_usage_before = psutil.cpu_percent(interval=0.1)
+    memory_usage_before = psutil.virtual_memory().percent
     num_tokens = tokenizer(input_text, return_tensors="pt").input_ids.shape[-1]
 
     start_time = time.time()
     generated_text = generator(input_text, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
     end_time = time.time()
 
-    cpu_usage_after = psutil.cpu_percent(interval=1)
-    memory_usage_after = psutil.virtual_memory().used
+    cpu_usage_after = psutil.cpu_percent(interval=0.1)
+    memory_usage_after = psutil.virtual_memory().percent
 
     inference_time = end_time - start_time
 

@@ -23,7 +23,7 @@ from write_on_file import write_on_file
 login(token='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')
 
 model_path = "google/gemma-2b"
-filename = 'Gemma/Gemma-2b-1.csv'
+filename = 'Gemma-2b-mac.csv'
 
 perplexity_metric = load("perplexity", module_type="metric")
 
@@ -56,19 +56,19 @@ for i, input_text in enumerate(texts):
     if i >= 100:
         break
 
-    cpu_usage_before = psutil.cpu_percent(interval=1)
-    memory_usage_before = psutil.virtual_memory().used
+    cpu_usage_before = psutil.cpu_percent(interval=0.1)
+    memory_usage_before = psutil.virtual_memory().percent
 
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
     num_tokens = input_ids.shape[-1]
 
     start_time = time.time()
-    generation_output = model.generate(input_ids=input_ids, max_new_tokens=32)
+    generation_output = model.generate(input_ids=input_ids, max_new_tokens=100)
     end_time = time.time()
     inference_time = end_time - start_time
 
-    cpu_usage_after = psutil.cpu_percent(interval=1)
-    memory_usage_after = psutil.virtual_memory().used
+    cpu_usage_after = psutil.cpu_percent(interval=0.1)
+    memory_usage_after = psutil.virtual_memory().percent
 
 
     text_result = tokenizer.decode(generation_output[0])
