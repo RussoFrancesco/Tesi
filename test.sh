@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cd gpt-neo
-python3 model.py 125M
-python3 model.py 1.3B
-cd ..
+#cd gpt-neo
+#python3 model.py 125M
+#python3 model.py 1.3B
+#cd ..
 cd SmolLM
 python3 model.py 135M
 python3 model.py 360M
