@@ -19,11 +19,12 @@ from hallucination import calculate_hallucination
 from write_on_file import write_on_file, end_testing
 
 model_params = sys.argv[1]
+start_index = int(sys.argv[2]) if len(sys.argv) > 2 else 0
 
 model_path = f'HuggingFaceTB/SmolLM-{model_params}'
-filename = f'SmolLM-{model_params}-mac.csv'
+filename = f'SmolLM-{model_params}-raspberry.csv'
 
-nltk.download('punkt')
+#nltk.download('punkt')
 
 
 perplexity_metric = load("perplexity", module_type="metric")
@@ -51,8 +52,9 @@ texts = dataset['text']
 p = psutil.Process()
 p.cpu_percent(interval=None)
 
-for i, input_text in enumerate(texts):
-    if i >= 101:
+
+for i, input_text in enumerate(texts[start_index:], start=start_index):
+    if i >= start_index + 101:
         break
         
     cpu_usage_before = p.cpu_percent(interval=None)
