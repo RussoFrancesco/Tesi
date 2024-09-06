@@ -20,7 +20,7 @@ from hallucination import calculate_hallucination
 from write_on_file import write_on_file, end_testing
 
 model_path = "TinyLlama/TinyLlama_v1.1"
-filename = 'tinyLLaMA-mac.csv'
+filename = 'tinyLLaMA-raspberry.csv'
 
 
 #perplexity_metric = load("perplexity", module_type="metric")
