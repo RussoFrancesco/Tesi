@@ -18,3 +18,9 @@ def end_testing(filename):
         current_time = time.localtime()
         formatted_time = time.strftime("%d-%m-%Y %H:%M:%S", current_time)
         f.write(f"Fine esecuzione: {formatted_time}")
+
+def start_testing(filename):
+    with open(filename, 'a', newline='') as f:
+        current_time = time.localtime()
+        formatted_time = time.strftime("%d-%m-%Y %H:%M:%S", current_time)
+        f.write(f"Inizio esecuzione: {formatted_time}")

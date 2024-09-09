@@ -17,10 +17,10 @@ if percorso_progetto not in sys.path:
     sys.path.append(percorso_progetto)
 
 from hallucination import calculate_hallucination
-from write_on_file import write_on_file, end_testing
+from write_on_file import write_on_file, end_testing, start_testing
 
 model_path = "TinyLlama/TinyLlama_v1.1"
-filename = 'tinyLLaMA-raspberry.csv'
+filename = 'tinyLLaMA-mac.csv'
 
 
 #perplexity_metric = load("perplexity", module_type="metric")
@@ -58,7 +58,7 @@ texts = dataset['text']
 
 p = psutil.Process()
 p.cpu_percent(interval=None)
-
+start_testing("tinyLLaMA-mac.txt")
 for i, input_text in enumerate(texts):
     if i >= 101:
         break
@@ -78,10 +78,10 @@ for i, input_text in enumerate(texts):
     memory_usage_after = p.memory_percent()
 
     if cpu_usage_before > 100:
-        cpu_usage_before = cpu_usage_before / 4
+        cpu_usage_before = cpu_usage_before / os.cpu_count()
     
     if cpu_usage_after > 100:
-        cpu_usage_after = cpu_usage_after / 4
+        cpu_usage_after = cpu_usage_after / os.cpu_count()
 
     score = calculate_perplexity(model, tokenizer, generated_text)
     bleu = calculate_bleu(input_text, generated_text)
@@ -89,4 +89,4 @@ for i, input_text in enumerate(texts):
 
     write_on_file(filename, i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
 
-end_testing('tinyLLaMA-raspberry.txt')
+end_testing('tinyLLaMA-mac.txt')

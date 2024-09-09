@@ -18,7 +18,7 @@ if percorso_progetto not in sys.path:
     sys.path.append(percorso_progetto)
 
 from hallucination import calculate_hallucination
-from write_on_file import write_on_file, end_testing
+from write_on_file import write_on_file, end_testing, start_testing
 
 model_path = 'mtgv/MobileLLaMA-1.4B-Base'
 filename = 'mobileLLaMA-mac.csv'
@@ -43,13 +43,13 @@ dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
 p = psutil.Process()
+start_testing("mobileLLaMA-mac.txt")
 p.cpu_percent(interval=None)
-
 for i, input_text in enumerate(texts): 
     if i >= 101:
         break
 
-    cpu_usage_before = p.cpu_percent(interval=None) / 4
+    cpu_usage_before = p.cpu_percent(interval=None)
     memory_usage_before = p.memory_percent()
 
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
@@ -60,8 +60,14 @@ for i, input_text in enumerate(texts):
     end_time = time.time()
     inference_time = end_time - start_time
 
-    cpu_usage_after = p.cpu_percent(interval=None) / 4
+    cpu_usage_after = p.cpu_percent(interval=None)
     memory_usage_after = p.memory_percent()
+
+    if cpu_usage_before > 100:
+        cpu_usage_before = cpu_usage_before / os.cpu_count()
+    
+    if cpu_usage_after > 100:
+        cpu_usage_after = cpu_usage_after / os.cpu_count()
 
     text_results = tokenizer.decode(generation_output[0], skip_special_tokens=True)
     score = calculate_perplexity(text_results)
@@ -70,4 +76,4 @@ for i, input_text in enumerate(texts):
 
     write_on_file(filename, i, num_tokens,inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, score, bleu, hallucination)
 
-end_testing("mobileLLaMA.txt")
+end_testing("mobileLLaMA-mac.txt")

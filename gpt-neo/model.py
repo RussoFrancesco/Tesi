@@ -15,12 +15,12 @@ if percorso_progetto not in sys.path:
     sys.path.append(percorso_progetto)
 
 from hallucination import calculate_hallucination
-from write_on_file import write_on_file, end_testing
+from write_on_file import write_on_file, end_testing, start_testing
 
 model_params = sys.argv[1]
 
 model_path = f'EleutherAI/gpt-neo-{model_params}'
-filename = f'gpt-neo-{model_params}-raspberry.csv'
+filename = f'gpt-neo-{model_params}-mac.csv'
 
 perplexity_metric = load("perplexity", module_type="metric")
 
@@ -44,7 +44,9 @@ generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
 dataset = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 texts = dataset['text']
 
+
 p = psutil.Process()
+start_testing(f"gpt-neo-{model_params}-mac.txt")
 p.cpu_percent(interval=None)
 for i, input_text in enumerate(texts):
     if i >= 101:
@@ -76,4 +78,4 @@ for i, input_text in enumerate(texts):
 
     write_on_file(filename, i, num_tokens, inference_time, cpu_usage_before, cpu_usage_after, memory_usage_before, memory_usage_after, perplexity, bleu, hallucination)
 
-end_testing(f"gpt-neo-{model_params}-raspberry.txt")
+end_testing(f"gpt-neo-{model_params}-mac.txt")
