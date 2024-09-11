@@ -1,0 +1,5 @@
+Tempo medio di inferenza: 29.598532981211598
+Aumento medio della CPU: -51.068069306930695
+Aumento medio della memoria usata: 51.301916519013965
+Perplexity media: 4.82734472208684
+Numero di volte che l'hallucination supera 0.5: 21
