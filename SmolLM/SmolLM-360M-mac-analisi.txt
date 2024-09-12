@@ -4,3 +4,5 @@ Aumento medio della memoria usata: 8.068621040570854
 Perplexity media: 5.101664109985427
 Numero di volte che l'hallucination supera 0.5: 9
 Inferenze in un'ora: 569.5667035221766
+Consumo totale: 0.0039 kWh
+Consumo medio orario: 0.013 kWh

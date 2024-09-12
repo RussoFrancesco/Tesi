@@ -5,3 +5,5 @@ Perplexity media: 13.418756392694288
 Numero di volte che l'hallucination supera 0.5: 48
 Numero di valori "nan" in Perplexity: 39
 Inferenze in un'ora: 593.0362885355054
+Consumo totale: 0.003 kWh
+Consumo medio orario: 0.014 kWh
