@@ -4,3 +4,4 @@ Aumento medio della memoria usata: -0.010795506781324137
 Perplexity media: 13.385249583951888
 Numero di volte che l'hallucination supera 0.5: 48
 Numero di valori "nan" in Perplexity: 39
+Inferenze in un'ora: 23.7613984552333
