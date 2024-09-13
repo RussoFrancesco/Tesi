@@ -5,15 +5,15 @@ import pandas as pd
 # Funzione per caricare i dati e calcolare il tempo medio di inferenza
 def load_and_calculate_mean_time(file_path):
     df = pd.read_csv(file_path).head(100)
-    return np.mean(df['Perplexity'])
+    return np.mean(df['Tempo di inferenza'])
 
 # File paths e labels
 file_paths = [
-    "SmolLM/SmolLM-1.7B-raspberry.csv",
-    "Gemma/Gemma-2b-mac.csv"
+    "SmolLM/SmolLM-135M-mac.csv",
+    "SmolLM/SmolLM-360M-mac.csv"
 ]
 
-labels = ["SmolLM-1.7B", "Gemma-2b"]
+labels = ["SmolLM-135M", "SmolLM-360M"]
 
 # Calcola i tempi medi per tutti i file
 mean_times = [load_and_calculate_mean_time(fp) for fp in file_paths]
@@ -28,10 +28,12 @@ bars = ax.bar(x, mean_times, width)
 
 # Aggiungi etichette e titolo
 ax.set_xlabel('Modello')
-ax.set_ylabel('Perplexity media')
-ax.set_title('Confronto perplexity media SmolLM e Gemma')
+ax.set_ylabel('Tempo medio di inferenza (s)')
+ax.set_title('Confronto dimensioni SmolLM su Mac')
 ax.set_xticks(x)
 ax.set_xticklabels(labels)
+ax.set_ylim(0, max(mean_times)+80)
+
 
 # Aggiungi le etichette di valore alle barre
 for bar in bars:
