@@ -3,3 +3,4 @@ Aumento medio della CPU: 36.349999999999994
 Aumento medio della memoria usata: 6.553936004638672
 Perplexity media: 5.541865885257721
 Numero di volte che l'hallucination supera 0.5: 1
+Tempo totale: 18091.208708047867

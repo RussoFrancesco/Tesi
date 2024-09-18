@@ -7,3 +7,4 @@ Numero di valori "nan" in Perplexity: 39
 Inferenze in un'ora: 593.0362885355054
 Consumo totale: 0.003 kWh
 Consumo medio orario: 0.014 kWh
+Tempo totale: 613.1159374713898

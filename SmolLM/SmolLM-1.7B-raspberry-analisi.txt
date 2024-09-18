@@ -6,3 +6,4 @@ Numero di volte che l'hallucination supera 0.5: 11
 Inferenze in un'ora: 2.9331928482914296
 Consumo totale: 0.234 kWh
 Consumo medio in un'ora: 0.0039 kWh
+Tempo totale: 209873.68776607513
